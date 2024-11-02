@@ -81,8 +81,9 @@ try {
             // Início do GET produtos
             if ($id) {
                 // ENDPOINT 2: Buscar produto específico
-                $stmt = $conn->prepare("SELECT * FROM tabela WHERE id = ?");
-                $stmt->execute([$id]);
+                $stmt = $conn->prepare("SELECT * FROM tabela WHERE id = :id");
+                $stmt->bindParam(':id', $id);
+                $stmt->execute();
 
                 if ($stmt->rowCount() > 0) {
                     $produto = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -105,7 +106,7 @@ try {
 
                 echo json_encode([
                     "erro" => false,
-                    "records" => $produtos
+                    "produtos" => $produtos
                 ]);
             }
             // Final do GET produtos
@@ -119,8 +120,9 @@ try {
 
             error_log("Tentando deletar produto ID: $id");
 
-            $stmt = $conn->prepare("DELETE FROM tabela WHERE id = ?");
-            $stmt->execute([$id]);
+            $stmt = $conn->prepare("DELETE FROM tabela WHERE id = :id");
+            $stmt->bindParam(':id', $id);
+            $stmt->execute();
 
             if ($stmt->rowCount() > 0) {
                 echo json_encode([
@@ -149,14 +151,12 @@ try {
             error_log("Atualizando produto ID: $id");
             error_log("Dados recebidos: " . json_encode($dados));
 
-            $stmt = $conn->prepare("UPDATE tabela SET titulo = ?, descricao = ? WHERE id = ?");
-            $resultado = $stmt->execute([
-                $dados['titulo'],
-                $dados['descricao'],
-                $id
-            ]);
+            $stmt = $conn->prepare("UPDATE tabela SET titulo = :titulo, descricao = :descricao WHERE id = :id");
+            $stmt->bindParam(':titulo', $dados['titulo']);
+            $stmt->bindParam(':descricao', $dados['descricao']);
+            $stmt->bindParam(':id', $id);
 
-            if ($resultado) {
+            if ($stmt->execute()) {
                 echo json_encode([
                     "erro" => false,
                     "mensagem" => "Produto atualizado com sucesso"
@@ -175,13 +175,11 @@ try {
                 throw new Exception("Dados inválidos");
             }
 
-            $stmt = $conn->prepare("INSERT INTO tabela (titulo, descricao) VALUES (?, ?)");
-            $resultado = $stmt->execute([
-                $dados['titulo'],
-                $dados['descricao']
-            ]);
+            $stmt = $conn->prepare("INSERT INTO tabela (titulo, descricao) VALUES (:titulo, :descricao)");
+            $stmt->bindParam(':titulo', $dados['titulo']);
+            $stmt->bindParam(':descricao', $dados['descricao']);
 
-            if ($resultado) {
+            if ($stmt->execute()) {
                 echo json_encode([
                     "erro" => false,
                     "mensagem" => "Produto cadastrado com sucesso"

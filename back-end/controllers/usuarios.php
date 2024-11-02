@@ -1,131 +1,147 @@
 <?php
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+header('Content-Type: application/json');
 
-/**
- * API de Usuários - Documentação dos Endpoints
- * 
- * Base URL: /back-end/controllers/usuarios.php
- * 
- * ENDPOINTS DISPONÍVEIS:
- * 
- * 1. CRIAR NOVO USUÁRIO
- *    POST /usuarios.php
- *    Implementação: Linhas 13-54
- *    Body: {
- *      "nome": "string",
- *      "email": "string",
- *      "senha": "string"
- *    }
- *    Resposta Sucesso: {
- *      "erro": false,
- *      "mensagem": "Usuário cadastrado com sucesso!"
- *    }
- *    Respostas Erro: {
- *      "erro": true,
- *      "mensagem": "Email já cadastrado!" | "Dados incompletos!" | "Erro ao cadastrar usuário!"
- *    }
- * 
- * 2. LISTAR USUÁRIOS (A ser implementado)
- *    GET /usuarios.php
- * 
- * 3. ATUALIZAR USUÁRIO (A ser implementado)
- *    PUT /usuarios.php?id={id}
- * 
- * 4. DELETAR USUÁRIO (A ser implementado)
- *    DELETE /usuarios.php?id={id}
- * 
- * CONFIGURAÇÕES:
- * - Headers CORS: Linhas 2-5
- * - Conexão com banco: Linha 7
- * 
- * VALIDAÇÕES:
- * - Verificação de email duplicado: Linhas 16-20
- * - Validação de dados obrigatórios: Linhas 14-15
- * 
- * CÓDIGOS DE ERRO:
- * - 200: Sucesso (Todas operações)
- * - 500: Erro interno do servidor
- * 
- * OBSERVAÇÕES:
- * - Em produção, implementar hash para senha
- * - Implementar validação de formato de email
- * - Implementar validação de força da senha
- */
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    exit;
+}
 
-header("Access-Control-Allow-Origin: *");
-header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+try {
+    require_once __DIR__ . '/../config/conexao.php';
 
-include_once '../config/conexao.php';
+    $method = $_SERVER['REQUEST_METHOD'];
 
-$method = $_SERVER['REQUEST_METHOD'];
+    switch ($method) {
+        case 'GET':
+            // Listar usuários
+            $stmt = $conn->prepare("SELECT id, nome, email, status FROM usuarios");
+            $stmt->execute();
+            $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-switch ($method) {
-    case 'GET':
-        if (isset($_GET['email'])) {
-            $email = $_GET['email'];
+            echo json_encode([
+                "erro" => false,
+                "usuarios" => $usuarios
+            ]);
+            break;
 
-            $query = "SELECT nome FROM usuarios WHERE email = :email";
-            $stmt = $conn->prepare($query);
-            $stmt->bindParam(':email', $email);
+        case 'POST':
+            // Recebe os dados do corpo da requisição
+            $json = file_get_contents('php://input');
+            $dados = json_decode($json, true);
+
+            // Verifica se todos os campos necessários foram enviados
+            if (!isset($dados['nome']) || !isset($dados['email']) || !isset($dados['senha'])) {
+                http_response_code(400);
+                echo json_encode([
+                    "erro" => true,
+                    "mensagem" => "Dados incompletos!"
+                ]);
+                exit;
+            }
+
+            // Verifica se o email já existe
+            $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = :email");
+            $stmt->bindParam(':email', $dados['email']);
             $stmt->execute();
 
             if ($stmt->rowCount() > 0) {
-                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-                $response = [
-                    "erro" => false,
-                    "nome" => $usuario['nome']
-                ];
-            } else {
-                $response = [
-                    "erro" => true,
-                    "mensagem" => "Usuário não encontrado"
-                ];
-            }
-        }
-        break;
-
-    case 'POST':
-        $dados = json_decode(file_get_contents("php://input"));
-
-        if (!empty($dados->nome) && !empty($dados->email) && !empty($dados->senha)) {
-            $query_verify = "SELECT id FROM usuarios WHERE email = :email LIMIT 1";
-            $result_verify = $conn->prepare($query_verify);
-            $result_verify->bindParam(':email', $dados->email);
-            $result_verify->execute();
-
-            if ($result_verify->rowCount() > 0) {
-                $response = [
+                http_response_code(400);
+                echo json_encode([
                     "erro" => true,
                     "mensagem" => "Email já cadastrado!"
-                ];
-            } else {
-                $query_usuario = "INSERT INTO usuarios (nome, email, senha) VALUES (:nome, :email, :senha)";
-                $cad_usuario = $conn->prepare($query_usuario);
-                $cad_usuario->bindParam(':nome', $dados->nome);
-                $cad_usuario->bindParam(':email', $dados->email);
-                $cad_usuario->bindParam(':senha', $dados->senha);
-
-                if ($cad_usuario->execute()) {
-                    $response = [
-                        "erro" => false,
-                        "mensagem" => "Usuário cadastrado com sucesso!"
-                    ];
-                } else {
-                    $response = [
-                        "erro" => true,
-                        "mensagem" => "Erro ao cadastrar usuário!"
-                    ];
-                }
+                ]);
+                exit;
             }
-        } else {
-            $response = [
-                "erro" => true,
-                "mensagem" => "Dados incompletos!"
-            ];
-        }
-        break;
-}
 
-http_response_code(200);
-echo json_encode($response);
+            // Insere o novo usuário (sem criptografia)
+            $stmt = $conn->prepare("INSERT INTO usuarios (nome, email, senha, status) VALUES (:nome, :email, :senha, 'ativo')");
+            $stmt->bindParam(':nome', $dados['nome']);
+            $stmt->bindParam(':email', $dados['email']);
+            $stmt->bindParam(':senha', $dados['senha']);
+
+            if ($stmt->execute()) {
+                http_response_code(201);
+                echo json_encode([
+                    "erro" => false,
+                    "mensagem" => "Usuário cadastrado com sucesso!"
+                ]);
+            } else {
+                throw new Exception("Erro ao cadastrar usuário");
+            }
+            break;
+
+        case 'PUT':
+            $id = $_GET['id'] ?? null;
+            if (!$id) {
+                http_response_code(400);
+                echo json_encode([
+                    "erro" => true,
+                    "mensagem" => "ID não fornecido"
+                ]);
+                exit;
+            }
+
+            $json = file_get_contents('php://input');
+            $dados = json_decode($json, true);
+
+            $stmt = $conn->prepare("UPDATE usuarios SET nome = :nome, email = :email WHERE id = :id");
+            $stmt->bindParam(':nome', $dados['nome']);
+            $stmt->bindParam(':email', $dados['email']);
+            $stmt->bindParam(':id', $id);
+
+            if ($stmt->execute()) {
+                echo json_encode([
+                    "erro" => false,
+                    "mensagem" => "Usuário atualizado com sucesso!"
+                ]);
+            } else {
+                throw new Exception("Erro ao atualizar usuário");
+            }
+            break;
+
+        case 'DELETE':
+            $id = $_GET['id'] ?? null;
+            if (!$id) {
+                http_response_code(400);
+                echo json_encode([
+                    "erro" => true,
+                    "mensagem" => "ID não fornecido"
+                ]);
+                exit;
+            }
+
+            $stmt = $conn->prepare("DELETE FROM usuarios WHERE id = :id");
+            $stmt->bindParam(':id', $id);
+
+            if ($stmt->execute()) {
+                echo json_encode([
+                    "erro" => false,
+                    "mensagem" => "Usuário excluído com sucesso!"
+                ]);
+            } else {
+                throw new Exception("Erro ao excluir usuário");
+            }
+            break;
+
+        default:
+            http_response_code(405);
+            echo json_encode([
+                "erro" => true,
+                "mensagem" => "Método não permitido"
+            ]);
+    }
+} catch (PDOException $e) {
+    http_response_code(500);
+    echo json_encode([
+        "erro" => true,
+        "mensagem" => "Erro no banco de dados: " . $e->getMessage()
+    ]);
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        "erro" => true,
+        "mensagem" => $e->getMessage()
+    ]);
+}

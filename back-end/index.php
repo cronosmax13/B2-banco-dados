@@ -25,6 +25,18 @@
  *    Controller: /controllers/usuarios.php
  *    Métodos Suportados: GET, POST, PUT, DELETE
  * 
+ * 4. CADASTRO
+ *    Rota: /cadastrar
+ *    Implementação: Linhas 32-34
+ *    Controller: /controllers/usuarios.php
+ *    Métodos Suportados: POST
+ * 
+ * 5. ALTERAR SENHA
+ *    Rota: /alterar-senha
+ *    Implementação: Linhas 36-38
+ *    Controller: /controllers/alterar_senha.php
+ *    Métodos Suportados: POST
+ * 
  * CONFIGURAÇÕES:
  * - Configuração de erros: Linhas 2-3
  * - Configuração CORS: Linhas 5-7
@@ -39,40 +51,47 @@
  * - Extração de rota e ID: Linhas 19-20
  */
 
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
+header("Content-Type: application/json; charset=UTF-8");
+
+// Habilitar exibição de erros para debug
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
+    exit(0);
 }
 
+// Incluir o arquivo de conexão no início
+require_once __DIR__ . '/config/conexao.php';
+
+$url = $_SERVER['REQUEST_URI'];
+$url = parse_url($url, PHP_URL_PATH);
+$route = trim($url, '/');
+
 try {
-    $request_uri = $_SERVER['REQUEST_URI'];
-    $path = parse_url($request_uri, PHP_URL_PATH);
-    $path_parts = explode('/', trim($path, '/'));
-
-    $rota = $path_parts[0] ?? '';
-    $id = $path_parts[1] ?? null;
-
-    error_log("Rota: " . $rota . ", ID: " . $id . ", Método: " . $_SERVER['REQUEST_METHOD']);
-
-    switch ($rota) {
-        case 'produtos':
-            $_REQUEST['id'] = $id; // Passa o ID para o controller
-            require_once __DIR__ . '/controllers/produtos.php';
-            break;
-
+    switch ($route) {
         case 'login':
             require_once __DIR__ . '/controllers/login.php';
             break;
 
+        case 'produtos':
+            require_once __DIR__ . '/controllers/produtos.php';
+            break;
+
+        case (preg_match('/^produtos\/\d+$/', $route) ? true : false):
+            $id = substr($route, strrpos($route, '/') + 1);
+            require_once __DIR__ . '/controllers/produtos.php';
+            break;
+
         case 'usuarios':
             require_once __DIR__ . '/controllers/usuarios.php';
+            break;
+
+        case 'alterar-senha':
+            require_once __DIR__ . '/controllers/alterar_senha.php';
             break;
 
         default:
@@ -81,9 +100,9 @@ try {
                 "erro" => true,
                 "mensagem" => "Rota não encontrada"
             ]);
+            break;
     }
 } catch (Exception $e) {
-    error_log($e->getMessage());
     http_response_code(500);
     echo json_encode([
         "erro" => true,

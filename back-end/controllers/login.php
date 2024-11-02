@@ -44,59 +44,69 @@
  */
 
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Max-Age: 3600");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Se for uma requisição OPTIONS, retorna sucesso imediatamente
+// Log para debug
+error_log("Requisição recebida: " . $_SERVER['REQUEST_METHOD']);
+
+// Tratamento especial para requisições OPTIONS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
-    exit;
+    exit();
 }
 
-try {
-    // Verifica se é POST
-    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-        throw new Exception('Método não permitido');
-    }
+// Inclui arquivo de conexão
+require_once __DIR__ . '/../config/conexao.php';
 
-    // Pega o corpo da requisição
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $json = file_get_contents('php://input');
-    $dados = json_decode($json, true);
+    error_log("Dados recebidos: " . $json);
 
-    if (!$dados || !isset($dados['email']) || !isset($dados['senha'])) {
-        throw new Exception('Dados inválidos');
-    }
+    $dados = json_decode($json);
 
-    require_once __DIR__ . '/../config/conexao.php';
+    if (!empty($dados->email) && !empty($dados->senha)) {
+        try {
+            $query = "SELECT * FROM usuarios WHERE email = :email AND senha = :senha";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':email', $dados->email);
+            $stmt->bindParam(':senha', $dados->senha);
+            $stmt->execute();
 
-    $email = $dados['email'];
-    $senha = $dados['senha'];
-
-    // Query para buscar usuário
-    $query = "SELECT id, nome, email FROM usuarios WHERE email = ? AND senha = ?";
-    $stmt = $conn->prepare($query);
-    $stmt->execute([$email, $senha]); // Nota: Em produção, use hash para senha!
-
-    if ($stmt->rowCount() > 0) {
-        $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-        echo json_encode([
-            "erro" => false,
-            "mensagem" => "Login realizado com sucesso",
-            "usuario" => $usuario
-        ]);
+            if ($stmt->rowCount() > 0) {
+                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+                echo json_encode([
+                    "erro" => false,
+                    "mensagem" => "Login realizado com sucesso",
+                    "usuario" => [
+                        "nome" => $usuario['nome'],
+                        "email" => $usuario['email']
+                    ]
+                ]);
+            } else {
+                echo json_encode([
+                    "erro" => true,
+                    "mensagem" => "Email ou senha incorretos"
+                ]);
+            }
+        } catch (PDOException $e) {
+            error_log("Erro no banco: " . $e->getMessage());
+            echo json_encode([
+                "erro" => true,
+                "mensagem" => "Erro ao realizar login"
+            ]);
+        }
     } else {
-        http_response_code(401);
         echo json_encode([
             "erro" => true,
-            "mensagem" => "Email ou senha incorretos"
+            "mensagem" => "Email e senha são obrigatórios"
         ]);
     }
-} catch (Exception $e) {
-    error_log("Erro no login: " . $e->getMessage());
-    http_response_code(500);
+} else {
     echo json_encode([
         "erro" => true,
-        "mensagem" => "Erro ao realizar login: " . $e->getMessage()
+        "mensagem" => "Método não permitido"
     ]);
 }
