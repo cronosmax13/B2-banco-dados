@@ -1,4 +1,56 @@
 <?php
+
+/**
+ * API de Usuários - Documentação dos Endpoints
+ * 
+ * Base URL: /back-end/controllers/usuarios.php
+ * 
+ * ENDPOINTS DISPONÍVEIS:
+ * 
+ * 1. CRIAR NOVO USUÁRIO
+ *    POST /usuarios.php
+ *    Implementação: Linhas 13-54
+ *    Body: {
+ *      "nome": "string",
+ *      "email": "string",
+ *      "senha": "string"
+ *    }
+ *    Resposta Sucesso: {
+ *      "erro": false,
+ *      "mensagem": "Usuário cadastrado com sucesso!"
+ *    }
+ *    Respostas Erro: {
+ *      "erro": true,
+ *      "mensagem": "Email já cadastrado!" | "Dados incompletos!" | "Erro ao cadastrar usuário!"
+ *    }
+ * 
+ * 2. LISTAR USUÁRIOS (A ser implementado)
+ *    GET /usuarios.php
+ * 
+ * 3. ATUALIZAR USUÁRIO (A ser implementado)
+ *    PUT /usuarios.php?id={id}
+ * 
+ * 4. DELETAR USUÁRIO (A ser implementado)
+ *    DELETE /usuarios.php?id={id}
+ * 
+ * CONFIGURAÇÕES:
+ * - Headers CORS: Linhas 2-5
+ * - Conexão com banco: Linha 7
+ * 
+ * VALIDAÇÕES:
+ * - Verificação de email duplicado: Linhas 16-20
+ * - Validação de dados obrigatórios: Linhas 14-15
+ * 
+ * CÓDIGOS DE ERRO:
+ * - 200: Sucesso (Todas operações)
+ * - 500: Erro interno do servidor
+ * 
+ * OBSERVAÇÕES:
+ * - Em produção, implementar hash para senha
+ * - Implementar validação de formato de email
+ * - Implementar validação de força da senha
+ */
+
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -9,6 +61,30 @@ include_once '../config/conexao.php';
 $method = $_SERVER['REQUEST_METHOD'];
 
 switch ($method) {
+    case 'GET':
+        if (isset($_GET['email'])) {
+            $email = $_GET['email'];
+
+            $query = "SELECT nome FROM usuarios WHERE email = :email";
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':email', $email);
+            $stmt->execute();
+
+            if ($stmt->rowCount() > 0) {
+                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+                $response = [
+                    "erro" => false,
+                    "nome" => $usuario['nome']
+                ];
+            } else {
+                $response = [
+                    "erro" => true,
+                    "mensagem" => "Usuário não encontrado"
+                ];
+            }
+        }
+        break;
+
     case 'POST':
         $dados = json_decode(file_get_contents("php://input"));
 

@@ -1,4 +1,44 @@
 <?php
+
+/**
+ * API Router Principal - Documentação
+ * 
+ * Base URL: /back-end/index.php
+ * 
+ * ROTAS DISPONÍVEIS:
+ * 
+ * 1. PRODUTOS
+ *    Rota: /produtos ou /produtos/{id}
+ *    Implementação: Linhas 20-22
+ *    Controller: /controllers/produtos.php
+ *    Métodos Suportados: GET, POST, PUT, DELETE
+ * 
+ * 2. LOGIN
+ *    Rota: /login
+ *    Implementação: Linhas 24-26
+ *    Controller: /controllers/login.php
+ *    Métodos Suportados: POST
+ * 
+ * 3. USUÁRIOS
+ *    Rota: /usuarios
+ *    Implementação: Linhas 28-30
+ *    Controller: /controllers/usuarios.php
+ *    Métodos Suportados: GET, POST, PUT, DELETE
+ * 
+ * CONFIGURAÇÕES:
+ * - Configuração de erros: Linhas 2-3
+ * - Configuração CORS: Linhas 5-7
+ * - Tratamento OPTIONS: Linhas 9-12
+ * 
+ * TRATAMENTO DE ERROS:
+ * - 404: Rota não encontrada (Linhas 32-38)
+ * - 500: Erro interno do servidor (Linhas 39-46)
+ * 
+ * PARÂMETROS DE ROTA:
+ * - Parsing da URL: Linhas 14-17
+ * - Extração de rota e ID: Linhas 19-20
+ */
+
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 

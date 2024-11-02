@@ -1,4 +1,48 @@
 <?php
+
+/**
+ * API de Login - Documentação do Endpoint
+ * 
+ * Base URL: /back-end/controllers/login.php
+ * 
+ * ENDPOINT DISPONÍVEL:
+ * 
+ * 1. REALIZAR LOGIN
+ *    POST /login.php
+ *    Implementação: Linhas 22-42
+ *    Body: {
+ *      "email": "string",
+ *      "senha": "string"
+ *    }
+ *    Resposta Sucesso: {
+ *      "erro": false,
+ *      "mensagem": "Login realizado com sucesso",
+ *      "usuario": { id, nome, email }
+ *    }
+ *    Resposta Erro: {
+ *      "erro": true,
+ *      "mensagem": "Email ou senha incorretos"
+ *    }
+ * 
+ * CONFIGURAÇÕES:
+ * - Headers CORS: Linhas 2-5
+ * - Tratamento OPTIONS: Linhas 7-11
+ * - Conexão com banco: Linha 24
+ * 
+ * VALIDAÇÕES:
+ * - Método HTTP: Linhas 13-16
+ * - Dados do request: Linhas 19-21
+ * 
+ * CÓDIGOS DE ERRO:
+ * - 200: Sucesso (Login realizado)
+ * - 401: Não autorizado (Credenciais inválidas)
+ * - 500: Erro interno do servidor (Tratamento de exceções: Linhas 43-51)
+ * 
+ * OBSERVAÇÕES:
+ * - Em produção, implementar hash para senha
+ * - Implementar token JWT para autenticação
+ */
+
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: POST, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type");
