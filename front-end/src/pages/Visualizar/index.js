@@ -6,6 +6,7 @@ import {
   BotaoAcao,
   Titulo,
   ConteudoProduto,
+  AlertDanger,
 } from "./styles";
 
 export const Visualizar = () => {
@@ -24,9 +25,17 @@ export const Visualizar = () => {
   });
 
   useEffect(() => {
+    if (!id) {
+      setStatus({
+        type: "erro",
+        mensagem: "ID do produto não fornecido",
+      });
+      return;
+    }
+
     const getProduto = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/produtos/${id}`);
+        const response = await fetch(`http://localhost:8000/produtos?id=${id}`);
 
         if (!response.ok) {
           throw new Error(`Erro HTTP: ${response.status}`);
@@ -57,20 +66,24 @@ export const Visualizar = () => {
         <BotaoAcao onClick={() => history.goBack()}>Voltar</BotaoAcao>
       </ConteudoTitulo>
 
-      <ConteudoProduto>
-        <p>
-          <strong>ID: </strong>
-          {data.id}
-        </p>
-        <p>
-          <strong>Título: </strong>
-          {data.titulo}
-        </p>
-        <p>
-          <strong>Descrição: </strong>
-          {data.descricao}
-        </p>
-      </ConteudoProduto>
+      {status.type === "erro" && <AlertDanger>{status.mensagem}</AlertDanger>}
+
+      {!status.type && (
+        <ConteudoProduto>
+          <p>
+            <strong>ID: </strong>
+            {data.id}
+          </p>
+          <p>
+            <strong>Título: </strong>
+            {data.titulo}
+          </p>
+          <p>
+            <strong>Descrição: </strong>
+            {data.descricao}
+          </p>
+        </ConteudoProduto>
+      )}
     </Container>
   );
 };

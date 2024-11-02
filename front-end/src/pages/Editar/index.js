@@ -2,15 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import {
   Container,
-  ConteudoForm,
   ConteudoTitulo,
   BotaoAcao,
-  AlertSuccess,
-  AlertDanger,
+  Titulo,
+  ConteudoForm,
   Form,
   Label,
   Input,
-  Titulo,
+  AlertSuccess,
+  AlertDanger,
 } from "./styles";
 
 export const Editar = () => {
@@ -29,23 +29,21 @@ export const Editar = () => {
 
   const getProduto = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/produtos/${id}`);
+      const response = await fetch(`http://localhost:8000/produtos?id=${id}`);
+      const responseJson = await response.json();
 
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
+      if (responseJson.erro) {
+        setStatus({
+          type: "erro",
+          mensagem: responseJson.mensagem,
+        });
+      } else {
+        setProduto(responseJson.produto);
       }
-
-      const data = await response.json();
-
-      if (data.erro) {
-        throw new Error(data.mensagem);
-      }
-
-      setProduto(data.produto);
     } catch (err) {
       setStatus({
         type: "erro",
-        mensagem: "Erro ao carregar o produto: " + err.message,
+        mensagem: "Erro ao carregar produto: " + err.message,
       });
     }
   };
@@ -54,53 +52,47 @@ export const Editar = () => {
     e.preventDefault();
 
     try {
-      if (!produto.titulo || !produto.descricao) {
-        setStatus({
-          type: "erro",
-          mensagem: "Preencha todos os campos!",
-        });
-        return;
-      }
-
-      const response = await fetch(`http://localhost:8000/produtos/${id}`, {
+      const response = await fetch(`http://localhost:8000/produtos?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
         },
-        body: JSON.stringify({
-          titulo: produto.titulo,
-          descricao: produto.descricao,
-        }),
+        body: JSON.stringify(produto),
       });
 
-      const data = await response.json();
+      const responseJson = await response.json();
 
-      if (!response.ok) {
-        throw new Error(data.mensagem || `Erro HTTP: ${response.status}`);
+      if (responseJson.erro) {
+        setStatus({
+          type: "erro",
+          mensagem: responseJson.mensagem,
+        });
+      } else {
+        setStatus({
+          type: "success",
+          mensagem: "Produto atualizado com sucesso!",
+        });
+
+        setTimeout(() => {
+          history.push("/");
+        }, 2000);
       }
-
-      if (data.erro) {
-        throw new Error(data.mensagem);
-      }
-
-      setStatus({
-        type: "success",
-        mensagem: "Produto atualizado com sucesso!",
-      });
-
-      setTimeout(() => {
-        history.push("/");
-      }, 2000);
     } catch (err) {
       setStatus({
         type: "erro",
-        mensagem: "Erro ao atualizar o produto: " + err.message,
+        mensagem: "Erro ao atualizar produto: " + err.message,
       });
     }
   };
 
   useEffect(() => {
+    if (!id) {
+      setStatus({
+        type: "erro",
+        mensagem: "ID não fornecido",
+      });
+      return;
+    }
     getProduto();
   }, [id]);
 
@@ -111,12 +103,9 @@ export const Editar = () => {
         <BotaoAcao onClick={() => history.goBack()}>Voltar</BotaoAcao>
       </ConteudoTitulo>
 
-      {status.type === "erro" ? (
-        <AlertDanger>{status.mensagem}</AlertDanger>
-      ) : status.type === "success" ? (
+      {status.type === "erro" && <AlertDanger>{status.mensagem}</AlertDanger>}
+      {status.type === "success" && (
         <AlertSuccess>{status.mensagem}</AlertSuccess>
-      ) : (
-        ""
       )}
 
       <ConteudoForm>

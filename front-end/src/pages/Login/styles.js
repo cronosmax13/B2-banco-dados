@@ -76,3 +76,23 @@ export const AlertDanger = styled.div`
   border-radius: 4px;
   margin-bottom: 20px;
 `;
+
+export const LinkContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+
+  a {
+    color: #198754;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.3s;
+
+    &:hover {
+      color: #146c43;
+      text-decoration: underline;
+    }
+  }
+`;

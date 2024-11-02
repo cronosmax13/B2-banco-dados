@@ -48,11 +48,12 @@ export const Titulo = styled.h1`
 export const ButtonSuccess = styled.button`
   background-color: #198754;
   color: #fff;
-  padding: 8px 12px;
+  padding: 5px 8px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 15px;
+  font-size: 14px;
+  margin-right: 5px;
 
   &:hover {
     background-color: #157347;
@@ -66,7 +67,8 @@ export const ButtonPrimary = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
+  margin-right: 5px;
 
   &:hover {
     background-color: #0b5ed7;
@@ -90,12 +92,11 @@ export const ButtonWarning = styled.button`
 export const ButtonDanger = styled.button`
   background-color: #dc3545;
   color: #fff;
-  padding: 8px 12px;
+  padding: 5px 8px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s;
+  font-size: 14px;
 
   &:hover {
     background-color: #bb2d3b;
@@ -122,14 +123,21 @@ export const AlertDanger = styled.p`
 
 export const Table = styled.table`
   width: 100%;
-  th {
-    background-color: #ffd219;
-    color: #3e3e3e;
-    padding: 10px;
-  }
+  margin-top: 15px;
+  border-collapse: collapse;
+
+  th,
   td {
-    background-color: #f6f6f6;
-    color: #3e3e3e;
     padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f8f9fa;
+  }
+
+  tr:hover {
+    background-color: #f5f5f5;
   }
 `;

@@ -1,25 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { useAuth } from "../../contexts/AuthContext";
-
 import {
   Container,
   ConteudoTitulo,
   BotaoAcao,
   ButtonSuccess,
-  Table,
-  Titulo,
   ButtonPrimary,
-  ButtonWarning,
   ButtonDanger,
+  Table,
   AlertSuccess,
   AlertDanger,
-  HeaderContent,
+  Titulo,
 } from "./styles";
 
 export const Home = () => {
   const history = useHistory();
-  const { signOut } = useAuth();
   const [data, setData] = useState([]);
   const [status, setStatus] = useState({
     type: "",
@@ -30,7 +25,7 @@ export const Home = () => {
     try {
       const response = await fetch("http://localhost:8000/produtos");
       const responseJson = await response.json();
-      setData(responseJson.records);
+      setData(responseJson.produtos);
     } catch (err) {
       setStatus({
         type: "erro",
@@ -41,49 +36,27 @@ export const Home = () => {
 
   const apagarProduto = async (id) => {
     try {
-      if (!window.confirm("Deseja realmente apagar este produto?")) {
-        return;
-      }
-
-      const response = await fetch(`http://localhost:8000/produtos/${id}`, {
+      const response = await fetch(`http://localhost:8000/produtos?id=${id}`, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
       });
-
-      if (!response.ok) {
-        throw new Error(`Erro HTTP: ${response.status}`);
-      }
-
       const responseJson = await response.json();
 
       if (responseJson.erro) {
-        throw new Error(responseJson.mensagem);
+        setStatus({
+          type: "erro",
+          mensagem: responseJson.mensagem,
+        });
+      } else {
+        setStatus({
+          type: "success",
+          mensagem: responseJson.mensagem,
+        });
+        getProdutos(); // Atualiza a lista após deletar
       }
-
-      setStatus({
-        type: "success",
-        mensagem: responseJson.mensagem,
-      });
-
-      getProdutos(); // Atualiza a lista
     } catch (err) {
       setStatus({
         type: "erro",
         mensagem: "Erro ao apagar produto: " + err.message,
-      });
-    }
-  };
-
-  const handleLogout = () => {
-    try {
-      signOut();
-      history.push("/login");
-    } catch (error) {
-      setStatus({
-        type: "erro",
-        mensagem: "Erro ao fazer logout: " + error.message,
       });
     }
   };
@@ -94,27 +67,21 @@ export const Home = () => {
 
   return (
     <Container>
-      <HeaderContent>
-        <ConteudoTitulo>
-          <Titulo>Listar Produtos</Titulo>
-          <div className="button-group">
-            <Link to="/cadastrar">
-              <BotaoAcao>Cadastrar</BotaoAcao>
-            </Link>
-            <ButtonDanger onClick={handleLogout}>Sair</ButtonDanger>
-          </div>
-        </ConteudoTitulo>
-      </HeaderContent>
+      <ConteudoTitulo>
+        <Titulo>Listar Produtos</Titulo>
+        <div>
+          <ButtonSuccess onClick={() => history.push("/cadastrar")}>
+            Cadastrar
+          </ButtonSuccess>
+          <ButtonDanger onClick={() => history.push("/login")}>
+            Sair
+          </ButtonDanger>
+        </div>
+      </ConteudoTitulo>
 
-      {status.type === "erro" ? (
-        <AlertDanger>{status.mensagem}</AlertDanger>
-      ) : (
-        ""
-      )}
-      {status.type === "success" ? (
+      {status.type === "erro" && <AlertDanger>{status.mensagem}</AlertDanger>}
+      {status.type === "success" && (
         <AlertSuccess>{status.mensagem}</AlertSuccess>
-      ) : (
-        ""
       )}
 
       <Table>
@@ -127,30 +94,25 @@ export const Home = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item) => (
-            <tr key={item.id}>
-              <td>{item.id}</td>
-              <td>{item.titulo}</td>
-              <td>{item.descricao}</td>
+          {data.map((produto) => (
+            <tr key={produto.id}>
+              <td>{produto.id}</td>
+              <td>{produto.titulo}</td>
+              <td>{produto.descricao}</td>
               <td>
-                <Link
-                  to={`/visualizar/${item.id}`}
-                  className="btn btn-primary btn-sm"
+                <ButtonPrimary
+                  onClick={() => history.push(`/visualizar/${produto.id}`)}
                 >
                   Visualizar
-                </Link>{" "}
-                <Link
-                  to={`/editar/${item.id}`}
-                  className="btn btn-warning btn-sm"
+                </ButtonPrimary>{" "}
+                <ButtonSuccess
+                  onClick={() => history.push(`/editar/${produto.id}`)}
                 >
                   Editar
-                </Link>{" "}
-                <button
-                  onClick={() => apagarProduto(item.id)}
-                  className="btn btn-danger btn-sm"
-                >
-                  Apagar
-                </button>
+                </ButtonSuccess>{" "}
+                <ButtonDanger onClick={() => apagarProduto(produto.id)}>
+                  Deletar
+                </ButtonDanger>
               </td>
             </tr>
           ))}
@@ -159,3 +121,5 @@ export const Home = () => {
     </Container>
   );
 };
+
+export default Home;

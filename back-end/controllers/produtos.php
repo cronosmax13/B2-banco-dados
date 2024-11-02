@@ -81,7 +81,7 @@ try {
             // Início do GET produtos
             if ($id) {
                 // ENDPOINT 2: Buscar produto específico
-                $stmt = $conn->prepare("SELECT * FROM tabela WHERE id = :id");
+                $stmt = $conn->prepare("SELECT * FROM produtos WHERE id = :id");
                 $stmt->bindParam(':id', $id);
                 $stmt->execute();
 
@@ -100,7 +100,7 @@ try {
                 }
             } else {
                 // ENDPOINT 1: Listar todos os produtos
-                $stmt = $conn->prepare("SELECT * FROM tabela ORDER BY id DESC");
+                $stmt = $conn->prepare("SELECT * FROM produtos");
                 $stmt->execute();
                 $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -120,7 +120,7 @@ try {
 
             error_log("Tentando deletar produto ID: $id");
 
-            $stmt = $conn->prepare("DELETE FROM tabela WHERE id = :id");
+            $stmt = $conn->prepare("DELETE FROM produtos WHERE id = :id");
             $stmt->bindParam(':id', $id);
             $stmt->execute();
 
@@ -151,7 +151,7 @@ try {
             error_log("Atualizando produto ID: $id");
             error_log("Dados recebidos: " . json_encode($dados));
 
-            $stmt = $conn->prepare("UPDATE tabela SET titulo = :titulo, descricao = :descricao WHERE id = :id");
+            $stmt = $conn->prepare("UPDATE produtos SET titulo = :titulo, descricao = :descricao WHERE id = :id");
             $stmt->bindParam(':titulo', $dados['titulo']);
             $stmt->bindParam(':descricao', $dados['descricao']);
             $stmt->bindParam(':id', $id);
@@ -175,7 +175,7 @@ try {
                 throw new Exception("Dados inválidos");
             }
 
-            $stmt = $conn->prepare("INSERT INTO tabela (titulo, descricao) VALUES (:titulo, :descricao)");
+            $stmt = $conn->prepare("INSERT INTO produtos (titulo, descricao) VALUES (:titulo, :descricao)");
             $stmt->bindParam(':titulo', $dados['titulo']);
             $stmt->bindParam(':descricao', $dados['descricao']);
 

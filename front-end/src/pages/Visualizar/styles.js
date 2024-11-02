@@ -3,10 +3,10 @@ import styled from "styled-components";
 export const Container = styled.div`
   max-width: 960px;
   margin: 20px auto;
-  padding: 0 20px;
+  padding: 0 15px;
 `;
 
-export const ConteudoTitulo = styled.div`
+export const ConteudoTitulo = styled.section`
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -15,19 +15,17 @@ export const ConteudoTitulo = styled.div`
 
 export const Titulo = styled.h1`
   font-size: 23px;
-  font-family: sans-serif;
-  margin: 0;
+  color: #3e3e3e;
 `;
 
 export const BotaoAcao = styled.button`
+  padding: 8px 12px;
   background-color: #fff;
   color: #198754;
-  padding: 8px 12px;
   border: 1px solid #198754;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 16px;
-  transition: all 0.3s;
+  font-size: 14px;
 
   &:hover {
     background-color: #198754;
@@ -49,5 +47,14 @@ export const ConteudoProduto = styled.div`
 
   strong {
     color: #333;
+  }
+`;
+
+export const AlertDanger = styled.p`
+  color: #dc3545;
+  margin-bottom: 10px;
+
+  strong {
+    margin-right: 5px;
   }
 `;

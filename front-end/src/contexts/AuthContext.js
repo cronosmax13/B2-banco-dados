@@ -8,13 +8,28 @@ export const AuthProvider = ({ children }) => {
   // Estado para armazenar os dados do usuário
   // Inicializa verificando se existe um usuário salvo no localStorage
   const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem("usuario");
+    const storedUser = localStorage.getItem("@Authuser");
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
   // Função para realizar o login do usuário
   const signIn = async (email, senha) => {
     try {
+      console.log("Iniciando tentativa de login");
+
+      // Verificar se o servidor está acessível
+      try {
+        await fetch("http://localhost:8000/controllers/login.php", {
+          method: "OPTIONS",
+        });
+      } catch (error) {
+        console.error("Servidor não está acessível:", error);
+        throw new Error(
+          "Servidor não está respondendo. Verifique se está rodando na porta 8000"
+        );
+      }
+
+      // Tentativa de login
       const response = await fetch("http://localhost:8000/login", {
         method: "POST",
         headers: {
@@ -23,22 +38,25 @@ export const AuthProvider = ({ children }) => {
         body: JSON.stringify({ email, senha }),
       });
 
+      console.log("Status da resposta:", response.status);
       const data = await response.json();
+      console.log("Dados recebidos:", data);
 
       if (data.erro) {
         throw new Error(data.mensagem);
       }
 
       setUser(data.usuario);
-      localStorage.setItem("usuario", JSON.stringify(data.usuario));
+      localStorage.setItem("@Authuser", JSON.stringify([data.usuario]));
     } catch (err) {
+      console.error("Erro no login:", err);
       throw new Error(err.message);
     }
   };
 
   // Função para realizar o logout do usuário
   const signOut = () => {
-    localStorage.removeItem("usuario");
+    localStorage.removeItem("@Authuser");
     setUser(null);
   };
 

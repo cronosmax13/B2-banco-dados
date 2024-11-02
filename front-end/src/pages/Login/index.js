@@ -1,6 +1,6 @@
 // Importação das dependências necessárias
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 
 // Importação dos componentes estilizados
@@ -13,6 +13,7 @@ import {
   ButtonSuccess,
   AlertSuccess,
   AlertDanger,
+  LinkContainer,
 } from "./styles";
 
 export const Login = () => {
@@ -42,18 +43,15 @@ export const Login = () => {
 
   // Função que gerencia o processo de login
   const handleLogin = async (e) => {
-    e.preventDefault(); // Previne o comportamento padrão do formulário
+    e.preventDefault();
 
     try {
-      // Tenta realizar o login com as credenciais fornecidas
       await signIn(credentials.email, credentials.senha);
-      // Redireciona para a página inicial em caso de sucesso
       history.push("/");
-    } catch (error) {
-      // Em caso de erro, atualiza o estado com a mensagem de erro
+    } catch (err) {
       setStatus({
         type: "erro",
-        mensagem: error.message,
+        mensagem: err.message,
       });
     }
   };
@@ -86,6 +84,29 @@ export const Login = () => {
           />
 
           <ButtonSuccess type="submit">Acessar</ButtonSuccess>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "20px",
+              padding: "10px 0",
+              borderTop: "1px solid #eee",
+            }}
+          >
+            <Link
+              to="/cadastrar-usuario"
+              style={{ color: "#198754", textDecoration: "none" }}
+            >
+              Criar Usuário
+            </Link>
+            <Link
+              to="/alterar-senha"
+              style={{ color: "#198754", textDecoration: "none" }}
+            >
+              Alterar Senha
+            </Link>
+          </div>
         </Form>
       </ConteudoForm>
     </Container>
