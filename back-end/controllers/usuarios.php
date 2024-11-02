@@ -10,9 +10,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 try {
     require_once __DIR__ . '/../config/conexao.php';
-
+    // Início do switch usuarios = controller
     $method = $_SERVER['REQUEST_METHOD'];
-
     switch ($method) {
         case 'GET':
             // Listar usuários

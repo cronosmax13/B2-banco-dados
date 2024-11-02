@@ -76,6 +76,7 @@ try {
 
     error_log("Método: $method, ID: $id");
 
+    // Início do switch produtos = controller
     switch ($method) {
         case 'GET':
             // Início do GET produtos

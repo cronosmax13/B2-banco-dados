@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // Inclui arquivo de conexão
 require_once __DIR__ . '/../config/conexao.php';
 
+// Início do POST login = controller
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $json = file_get_contents('php://input');
     error_log("Dados recebidos: " . $json);
