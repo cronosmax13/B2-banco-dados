@@ -31,11 +31,18 @@
  *    Controller: /controllers/usuarios.php
  *    Métodos Suportados: POST
  * 
- * 5. ALTERAR SENHA
- *    Rota: /alterar-senha
- *    Implementação: Linhas 36-38
- *    Controller: /controllers/alterar_senha.php
- *    Métodos Suportados: POST
+ * 5. ALTERAR SENHA (TODO)
+ *    Rota: /usuarios/{id}/senha
+ *    Implementação Futura: Será adicionado como PATCH em usuarios.php
+ *    Métodos Suportados: PATCH
+ *    Payload Esperado: {
+ *      "senha_atual": "string",
+ *      "nova_senha": "string"
+ *    }
+ *    Resposta Esperada: {
+ *      "erro": false,
+ *      "mensagem": "Senha alterada com sucesso"
+ *    }
  * 
  * CONFIGURAÇÕES:
  * - Configuração de erros: Linhas 2-3
@@ -91,7 +98,7 @@ try {
             break;
 
         case 'alterar-senha':
-            require_once __DIR__ . '/controllers/alterar_senha.php';
+            require_once __DIR__ . '/controllers/usuarios.php';
             break;
 
         default:
