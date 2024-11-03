@@ -48,6 +48,8 @@ export const AuthProvider = ({ children }) => {
 
       setUser(data.usuario);
       localStorage.setItem("@Authuser", JSON.stringify([data.usuario]));
+
+      return data.usuario;
     } catch (err) {
       console.error("Erro no login:", err);
       throw new Error(err.message);

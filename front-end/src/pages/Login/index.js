@@ -47,7 +47,7 @@ export const Login = () => {
 
     try {
       await signIn(credentials.email, credentials.senha);
-      history.push("/");
+      history.push("/menu");
     } catch (err) {
       setStatus({
         type: "erro",
