@@ -10,17 +10,8 @@ try {
     $uri = $_SERVER['REQUEST_URI'];
 
     if (strpos($uri, 'relatorios/financeiro') !== false) {
-        // Relatório Financeiro
-        $stmt = $conn->prepare("
-            SELECT 
-                p.id,
-                p.titulo,
-                p.quantidade,
-                p.valor,
-                (p.quantidade * p.valor) as valor_total_estoque
-            FROM produtos p
-            ORDER BY p.id
-        ");
+        // Relatório Financeiro usando a view
+        $stmt = $conn->prepare("SELECT * FROM vw_relatorio_financeiro");
         $stmt->execute();
         $relatorio = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -35,7 +26,7 @@ try {
             "total_geral" => $total_geral
         ]);
     } elseif (strpos($uri, 'relatorios/estoque-baixo') !== false) {
-        // Relatório de Estoque Baixo
+        // Relatório de Estoque Baixo usando a view
         $stmt = $conn->prepare("SELECT * FROM vw_produtos_estoque_baixo");
         $stmt->execute();
         $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);

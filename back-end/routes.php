@@ -56,6 +56,12 @@
  *    Controller: /controllers/relatorios.php
  *    Métodos Suportados: GET
  * 
+ * 8. PRODUTOS - LOGS
+ *    Rota: /produtos/logs
+ *    Implementação: Linhas 44-46
+ *    Controller: /controllers/produtos_logs.php
+ *    Métodos Suportados: GET
+ * 
  * CONFIGURAÇÕES:
  * - Configuração de erros: Linhas 2-3
  * - Configuração CORS: Linhas 5-7
@@ -127,6 +133,10 @@ try {
 
         case 'relatorios/financeiro':
             require_once __DIR__ . '/controllers/relatorios.php';
+            break;
+
+        case 'produtos/logs':
+            require_once __DIR__ . '/controllers/produtos_logs.php';
             break;
 
         default:

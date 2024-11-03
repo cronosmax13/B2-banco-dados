@@ -184,19 +184,43 @@ try {
                 throw new Exception("Dados inválidos");
             }
 
-            $stmt = $conn->prepare("CALL sp_cadastrar_produto(:titulo, :descricao, :valor, :quantidade)");
-            $stmt->bindParam(':titulo', $dados['titulo']);
-            $stmt->bindParam(':descricao', $dados['descricao']);
-            $stmt->bindParam(':valor', $dados['valor']);
-            $stmt->bindParam(':quantidade', $dados['quantidade']);
+            try {
+                // Inicia a transação
+                $conn->beginTransaction();
 
-            if ($stmt->execute()) {
+                // Cadastra o produto diretamente
+                $stmt = $conn->prepare("INSERT INTO produtos (titulo, descricao, valor, quantidade) VALUES (:titulo, :descricao, :valor, :quantidade)");
+                $stmt->bindParam(':titulo', $dados['titulo']);
+                $stmt->bindParam(':descricao', $dados['descricao']);
+                $stmt->bindParam(':valor', $dados['valor']);
+                $stmt->bindParam(':quantidade', $dados['quantidade']);
+                $stmt->execute();
+
+                // Pega o ID do produto inserido
+                $produto_id = $conn->lastInsertId();
+
+                // Insere o log
+                $stmt_log = $conn->prepare("
+                    INSERT INTO logs_produtos 
+                    (produto_id, acao, quantidade_anterior, quantidade_nova) 
+                    VALUES 
+                    (:produto_id, 'INSERT', 0, :quantidade)
+                ");
+                $stmt_log->bindParam(':produto_id', $produto_id);
+                $stmt_log->bindParam(':quantidade', $dados['quantidade']);
+                $stmt_log->execute();
+
+                // Confirma a transação
+                $conn->commit();
+
                 echo json_encode([
                     "erro" => false,
                     "mensagem" => "Produto cadastrado com sucesso"
                 ]);
-            } else {
-                throw new Exception("Erro ao cadastrar produto");
+            } catch (PDOException $e) {
+                // Desfaz a transação em caso de erro
+                $conn->rollBack();
+                throw $e;
             }
             // Final do POST produtos
             break;
