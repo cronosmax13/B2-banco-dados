@@ -50,6 +50,12 @@
  *    Controller: /controllers/usuarios.php
  *    Métodos Suportados: GET, POST, PUT, DELETE
  * 
+ * 7. RELATÓRIOS
+ *    Rota: /relatorios/estoque-baixo ou /relatorios/financeiro
+ *    Implementação: Linhas 40-42
+ *    Controller: /controllers/relatorios.php
+ *    Métodos Suportados: GET
+ * 
  * CONFIGURAÇÕES:
  * - Configuração de erros: Linhas 2-3
  * - Configuração CORS: Linhas 5-7
@@ -116,6 +122,10 @@ try {
             break;
 
         case 'relatorios/estoque-baixo':
+            require_once __DIR__ . '/controllers/relatorios.php';
+            break;
+
+        case 'relatorios/financeiro':
             require_once __DIR__ . '/controllers/relatorios.php';
             break;
 
