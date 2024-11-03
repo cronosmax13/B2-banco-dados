@@ -85,7 +85,7 @@ try {
         case 'GET':
             // Início do GET produtos
             if ($id) {
-                // ENDPOINT 2: Buscar produto específico
+                // ENDPOINT 2: Buscar produto especfico
                 $stmt = $conn->prepare("SELECT * FROM produtos WHERE id = :id");
                 $stmt->bindParam(':id', $id);
                 $stmt->execute();
@@ -93,13 +93,8 @@ try {
                 if ($stmt->rowCount() > 0) {
                     $produto = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                    // Calcula o valor total do estoque usando a função
-                    $stmt_valor = $conn->prepare("SELECT fn_calcular_valor_total_estoque(:produto_id) as valor_total");
-                    $stmt_valor->bindParam(':produto_id', $id);
-                    $stmt_valor->execute();
-                    $valor_total = $stmt_valor->fetch(PDO::FETCH_ASSOC);
-
-                    $produto['valor_total_estoque'] = $valor_total['valor_total'];
+                    // Calcula o valor total do estoque diretamente
+                    $produto['valor_total_estoque'] = floatval($produto['valor']) * floatval($produto['quantidade']);
 
                     echo json_encode([
                         "erro" => false,
@@ -129,26 +124,37 @@ try {
             break;
 
         case 'DELETE':
-            // Início do DELETE produtos
             if (!$id) {
                 throw new Exception("ID não fornecido");
             }
 
-            error_log("Tentando deletar produto ID: $id");
+            try {
+                $conn->beginTransaction();
 
-            $stmt = $conn->prepare("DELETE FROM produtos WHERE id = :id");
-            $stmt->bindParam(':id', $id);
-            $stmt->execute();
+                // Primeiro remove os logs
+                $stmt = $conn->prepare("DELETE FROM logs_produtos WHERE produto_id = :id");
+                $stmt->bindParam(':id', $id);
+                $stmt->execute();
 
-            if ($stmt->rowCount() > 0) {
-                echo json_encode([
-                    "erro" => false,
-                    "mensagem" => "Produto excluído com sucesso"
-                ]);
-            } else {
-                throw new Exception("Produto não encontrado");
+                // Depois remove o produto
+                $stmt = $conn->prepare("DELETE FROM produtos WHERE id = :id");
+                $stmt->bindParam(':id', $id);
+                $stmt->execute();
+
+                $conn->commit();
+
+                if ($stmt->rowCount() > 0) {
+                    echo json_encode([
+                        "erro" => false,
+                        "mensagem" => "Produto excluído com sucesso"
+                    ]);
+                } else {
+                    throw new Exception("Produto não encontrado");
+                }
+            } catch (Exception $e) {
+                $conn->rollBack();
+                throw $e;
             }
-            // Final do DELETE produtos
             break;
 
         case 'PUT':
