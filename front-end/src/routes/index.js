@@ -11,6 +11,8 @@ import CadastrarUsuario from "../pages/CadastrarUsuario";
 import { AlterarSenha } from "../pages/AlterarSenha";
 import { Menu } from "../pages/Menu";
 import { EditarPerfil } from "../pages/EditarPerfil";
+import { RelatorioFinanceiro } from "../pages/RelatorioFinanceiro";
+import { EstoqueBaixo } from "../pages/EstoqueBaixo";
 
 const Routes = () => {
   return (
@@ -28,6 +30,11 @@ const Routes = () => {
         <PrivateRoute path="/visualizar/:id" component={Visualizar} />
         <PrivateRoute path="/menu" component={Menu} />
         <PrivateRoute path="/editar-perfil" component={EditarPerfil} />
+        <PrivateRoute
+          path="/relatorio-financeiro"
+          component={RelatorioFinanceiro}
+        />
+        <PrivateRoute path="/estoque-baixo" component={EstoqueBaixo} />
 
         {/* Redireciona qualquer rota não encontrada para Home */}
         <Route path="*" component={() => <Redirect to="/" />} />

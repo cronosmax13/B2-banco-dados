@@ -115,11 +115,15 @@ try {
             require_once __DIR__ . '/controllers/usuarios.php';
             break;
 
+        case 'relatorios/estoque-baixo':
+            require_once __DIR__ . '/controllers/relatorios.php';
+            break;
+
         default:
             http_response_code(404);
             echo json_encode([
                 "erro" => true,
-                "mensagem" => "Rota não encontrada"
+                "mensagem" => "Rota não encontrada: " . $route
             ]);
             break;
     }

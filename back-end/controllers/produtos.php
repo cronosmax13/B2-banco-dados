@@ -184,7 +184,7 @@ try {
                 throw new Exception("Dados inválidos");
             }
 
-            $stmt = $conn->prepare("INSERT INTO produtos (titulo, descricao, valor, quantidade) VALUES (:titulo, :descricao, :valor, :quantidade)");
+            $stmt = $conn->prepare("CALL sp_cadastrar_produto(:titulo, :descricao, :valor, :quantidade)");
             $stmt->bindParam(':titulo', $dados['titulo']);
             $stmt->bindParam(':descricao', $dados['descricao']);
             $stmt->bindParam(':valor', $dados['valor']);
