@@ -10,6 +10,7 @@ import { Visualizar } from "../pages/Visualizar";
 import CadastrarUsuario from "../pages/CadastrarUsuario";
 import { AlterarSenha } from "../pages/AlterarSenha";
 import { Menu } from "../pages/Menu";
+import { EditarPerfil } from "../pages/EditarPerfil";
 
 const Routes = () => {
   return (
@@ -26,6 +27,7 @@ const Routes = () => {
         <PrivateRoute path="/editar/:id" component={Editar} />
         <PrivateRoute path="/visualizar/:id" component={Visualizar} />
         <PrivateRoute path="/menu" component={Menu} />
+        <PrivateRoute path="/editar-perfil" component={EditarPerfil} />
 
         {/* Redireciona qualquer rota não encontrada para Home */}
         <Route path="*" component={() => <Redirect to="/" />} />

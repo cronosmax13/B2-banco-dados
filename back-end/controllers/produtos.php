@@ -30,7 +30,9 @@
  *    Implementação: Linhas 147-170
  *    Body: {
  *      "titulo": "string",
- *      "descricao": "string"
+ *      "descricao": "string",
+ *      "valor": "decimal",
+ *      "quantidade": "integer"
  *    }
  *    Resposta: {
  *      "erro": false,
@@ -42,7 +44,9 @@
  *    Implementação: Linhas 114-145
  *    Body: {
  *      "titulo": "string",
- *      "descricao": "string"
+ *      "descricao": "string",
+ *      "valor": "decimal",
+ *      "quantidade": "integer"
  *    }
  *    Resposta: {
  *      "erro": false,
@@ -154,9 +158,11 @@ try {
             error_log("Atualizando produto ID: $id");
             error_log("Dados recebidos: " . json_encode($dados));
 
-            $stmt = $conn->prepare("UPDATE produtos SET titulo = :titulo, descricao = :descricao WHERE id = :id");
+            $stmt = $conn->prepare("UPDATE produtos SET titulo = :titulo, descricao = :descricao, valor = :valor, quantidade = :quantidade WHERE id = :id");
             $stmt->bindParam(':titulo', $dados['titulo']);
             $stmt->bindParam(':descricao', $dados['descricao']);
+            $stmt->bindParam(':valor', $dados['valor']);
+            $stmt->bindParam(':quantidade', $dados['quantidade']);
             $stmt->bindParam(':id', $id);
 
             if ($stmt->execute()) {
@@ -178,9 +184,11 @@ try {
                 throw new Exception("Dados inválidos");
             }
 
-            $stmt = $conn->prepare("INSERT INTO produtos (titulo, descricao) VALUES (:titulo, :descricao)");
+            $stmt = $conn->prepare("INSERT INTO produtos (titulo, descricao, valor, quantidade) VALUES (:titulo, :descricao, :valor, :quantidade)");
             $stmt->bindParam(':titulo', $dados['titulo']);
             $stmt->bindParam(':descricao', $dados['descricao']);
+            $stmt->bindParam(':valor', $dados['valor']);
+            $stmt->bindParam(':quantidade', $dados['quantidade']);
 
             if ($stmt->execute()) {
                 echo json_encode([

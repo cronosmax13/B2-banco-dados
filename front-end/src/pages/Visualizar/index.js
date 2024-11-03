@@ -17,6 +17,8 @@ export const Visualizar = () => {
     id: "",
     titulo: "",
     descricao: "",
+    valor: "",
+    quantidade: "",
   });
 
   const [status, setStatus] = useState({
@@ -81,6 +83,14 @@ export const Visualizar = () => {
           <p>
             <strong>Descrição: </strong>
             {data.descricao}
+          </p>
+          <p>
+            <strong>Valor: </strong>
+            R$ {Number(data.valor).toFixed(2)}
+          </p>
+          <p>
+            <strong>Quantidade: </strong>
+            {data.quantidade}
           </p>
         </ConteudoProduto>
       )}

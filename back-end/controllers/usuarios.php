@@ -96,23 +96,59 @@ try {
             break;
 
         case 'PUT':
-            $id = $_GET['id'] ?? null;
-            if (!$id) {
+            $json = file_get_contents('php://input');
+            $dados = json_decode($json, true);
+
+            if (!isset($dados['email']) || !isset($dados['senha_atual'])) {
                 http_response_code(400);
                 echo json_encode([
                     "erro" => true,
-                    "mensagem" => "ID não fornecido"
+                    "mensagem" => "Dados incompletos"
                 ]);
                 exit;
             }
 
-            $json = file_get_contents('php://input');
-            $dados = json_decode($json, true);
-
-            $stmt = $conn->prepare("UPDATE usuarios SET nome = :nome, email = :email WHERE id = :id");
-            $stmt->bindParam(':nome', $dados['nome']);
+            // Verifica se o usuário existe e se a senha atual está correta
+            $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = :email AND senha = :senha");
             $stmt->bindParam(':email', $dados['email']);
-            $stmt->bindParam(':id', $id);
+            $stmt->bindParam(':senha', $dados['senha_atual']);
+            $stmt->execute();
+
+            if ($stmt->rowCount() === 0) {
+                http_response_code(401);
+                echo json_encode([
+                    "erro" => true,
+                    "mensagem" => "Senha atual incorreta"
+                ]);
+                exit;
+            }
+
+            // Prepara a query de atualização
+            $campos = [];
+            $valores = [];
+
+            if (isset($dados['nome']) && !empty($dados['nome'])) {
+                $campos[] = "nome = :nome";
+                $valores[':nome'] = $dados['nome'];
+            }
+
+            if (isset($dados['nova_senha']) && !empty($dados['nova_senha'])) {
+                $campos[] = "senha = :nova_senha";
+                $valores[':nova_senha'] = $dados['nova_senha'];
+            }
+
+            if (empty($campos)) {
+                echo json_encode([
+                    "erro" => true,
+                    "mensagem" => "Nenhuma alteração realizada"
+                ]);
+                exit;
+            }
+
+            $stmt = $conn->prepare("UPDATE usuarios SET " . implode(', ', $campos) . " WHERE email = :email");
+            $stmt->bindParam(':email', $dados['email']);
+            $stmt->bindParam(':nome', $dados['nome']);
+            $stmt->bindParam(':nova_senha', $dados['nova_senha']);
 
             if ($stmt->execute()) {
                 echo json_encode([

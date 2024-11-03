@@ -93,6 +93,8 @@ export const Produtos = () => {
             <th>ID</th>
             <th>Título</th>
             <th>Descrição</th>
+            <th>Valor</th>
+            <th>Quantidade</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -102,6 +104,8 @@ export const Produtos = () => {
               <td>{produto.id}</td>
               <td>{produto.titulo}</td>
               <td>{produto.descricao}</td>
+              <td>R$ {Number(produto.valor).toFixed(2)}</td>
+              <td>{produto.quantidade}</td>
               <td>
                 <ButtonPrimary
                   onClick={() => history.push(`/visualizar/${produto.id}`)}

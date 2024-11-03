@@ -19,6 +19,8 @@ export const Cadastrar = () => {
   const [produto, setProduto] = useState({
     titulo: "",
     descricao: "",
+    valor: "",
+    quantidade: "",
   });
 
   const [status, setStatus] = useState({
@@ -110,6 +112,31 @@ export const Cadastrar = () => {
               value={produto.descricao}
               onChange={(e) =>
                 setProduto({ ...produto, descricao: e.target.value })
+              }
+            />
+          </div>
+          <div>
+            <Label>Valor: </Label>
+            <Input
+              type="number"
+              step="0.01"
+              name="valor"
+              placeholder="Valor do produto"
+              value={produto.valor}
+              onChange={(e) =>
+                setProduto({ ...produto, valor: e.target.value })
+              }
+            />
+          </div>
+          <div>
+            <Label>Quantidade: </Label>
+            <Input
+              type="number"
+              name="quantidade"
+              placeholder="Quantidade em estoque"
+              value={produto.quantidade}
+              onChange={(e) =>
+                setProduto({ ...produto, quantidade: e.target.value })
               }
             />
           </div>
