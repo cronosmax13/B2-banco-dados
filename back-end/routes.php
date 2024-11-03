@@ -44,6 +44,12 @@
  *      "mensagem": "Senha alterada com sucesso"
  *    }
  * 
+ * 6. USUÁRIOS - PERFIL
+ *    Rota: /usuarios/perfil
+ *    Implementação: Linhas 36-38
+ *    Controller: /controllers/usuarios.php
+ *    Métodos Suportados: GET, POST, PUT, DELETE
+ * 
  * CONFIGURAÇÕES:
  * - Configuração de erros: Linhas 2-3
  * - Configuração CORS: Linhas 5-7
@@ -102,6 +108,10 @@ try {
             break;
 
         case 'alterar-senha':
+            require_once __DIR__ . '/controllers/usuarios.php';
+            break;
+
+        case 'usuarios/perfil':
             require_once __DIR__ . '/controllers/usuarios.php';
             break;
 

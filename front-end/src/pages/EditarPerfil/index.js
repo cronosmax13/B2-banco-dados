@@ -25,6 +25,20 @@ const EditarPerfil = () => {
     mensagem: "",
   });
 
+  useEffect(() => {
+    // Carrega os dados do usuário do localStorage
+    const storedUser = localStorage.getItem("@Authuser");
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      // Como o localStorage armazena um array com um único usuário
+      const user = Array.isArray(userData) ? userData[0] : userData;
+      setUsuario({
+        nome: user.nome || "",
+        email: user.email || "",
+      });
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -34,7 +48,10 @@ const EditarPerfil = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(usuario),
+        body: JSON.stringify({
+          email: usuario.email,
+          nome: usuario.nome,
+        }),
       });
 
       const data = await response.json();
@@ -49,6 +66,17 @@ const EditarPerfil = () => {
           type: "success",
           mensagem: "Perfil atualizado com sucesso!",
         });
+
+        // Atualiza os dados no localStorage
+        const storedUser = JSON.parse(localStorage.getItem("@Authuser"));
+        if (storedUser) {
+          const updatedUser = {
+            ...storedUser[0],
+            nome: usuario.nome,
+          };
+          localStorage.setItem("@Authuser", JSON.stringify([updatedUser]));
+        }
+
         setTimeout(() => {
           history.push("/menu");
         }, 2000);
