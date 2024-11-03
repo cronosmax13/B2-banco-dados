@@ -70,14 +70,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!empty($dados->email) && !empty($dados->senha)) {
         try {
-            $query = "SELECT * FROM usuarios WHERE email = :email AND senha = :senha";
+            $query = "
+                SELECT fn_verificar_credenciais(:email, :senha) as valido,
+                u.* FROM usuarios u 
+                WHERE u.email = :email
+            ";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':email', $dados->email);
             $stmt->bindParam(':senha', $dados->senha);
             $stmt->execute();
 
-            if ($stmt->rowCount() > 0) {
-                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($resultado && $resultado['valido']) {
+                $usuario = $resultado;
                 echo json_encode([
                     "erro" => false,
                     "mensagem" => "Login realizado com sucesso",

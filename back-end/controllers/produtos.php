@@ -92,6 +92,15 @@ try {
                 // Verifica se o produto foi encontrado
                 if ($stmt->rowCount() > 0) {
                     $produto = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    // Calcula o valor total do estoque usando a função
+                    $stmt_valor = $conn->prepare("SELECT fn_calcular_valor_total_estoque(:produto_id) as valor_total");
+                    $stmt_valor->bindParam(':produto_id', $id);
+                    $stmt_valor->execute();
+                    $valor_total = $stmt_valor->fetch(PDO::FETCH_ASSOC);
+
+                    $produto['valor_total_estoque'] = $valor_total['valor_total'];
+
                     echo json_encode([
                         "erro" => false,
                         "produto" => $produto
