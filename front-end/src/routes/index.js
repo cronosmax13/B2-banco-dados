@@ -13,6 +13,7 @@ import { Menu } from "../pages/Menu";
 import { EditarPerfil } from "../pages/EditarPerfil";
 import { RelatorioFinanceiro } from "../pages/RelatorioFinanceiro";
 import { EstoqueBaixo } from "../pages/EstoqueBaixo";
+import { Usuarios } from "../pages/Usuarios";
 
 const Routes = () => {
   return (
@@ -35,6 +36,7 @@ const Routes = () => {
           component={RelatorioFinanceiro}
         />
         <PrivateRoute path="/estoque-baixo" component={EstoqueBaixo} />
+        <PrivateRoute path="/usuarios" component={Usuarios} />
 
         {/* Redireciona qualquer rota não encontrada para Home */}
         <Route path="*" component={() => <Redirect to="/" />} />

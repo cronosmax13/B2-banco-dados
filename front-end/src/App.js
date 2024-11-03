@@ -5,6 +5,7 @@ import { EditarPerfil } from "./pages/EditarPerfil";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import { EstoqueBaixo } from "./pages/EstoqueBaixo";
 import { RelatorioFinanceiro } from "./pages/RelatorioFinanceiro";
+import { Usuarios } from "./pages/Usuarios";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/perfil" component={EditarPerfil} exact />
           <Route path="/estoque-baixo" component={EstoqueBaixo} />
           <Route path="/relatorio-financeiro" component={RelatorioFinanceiro} />
+          <Route path="/usuarios" component={Usuarios} />
           <Routes />
         </Switch>
       </BrowserRouter>
