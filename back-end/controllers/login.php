@@ -87,6 +87,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         "nivel_acesso" => $usuario['nivel_acesso']
                     ]
                 ]);
+
+                // Registra o log de acesso
+                $stmt_log = $conn->prepare("
+                    INSERT INTO logs_usuarios 
+                    (usuario_id, acao, descricao) 
+                    VALUES 
+                    (:usuario_id, 'LOGIN', :descricao)
+                ");
+
+                $descricao = "Login realizado com sucesso";
+                $stmt_log->bindParam(':usuario_id', $usuario['id']);
+                $stmt_log->bindParam(':descricao', $descricao);
+                $stmt_log->execute();
             } else {
                 echo json_encode([
                     "erro" => true,

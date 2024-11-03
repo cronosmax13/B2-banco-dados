@@ -188,7 +188,7 @@ try {
                 // Inicia a transação
                 $conn->beginTransaction();
 
-                // Cadastra o produto diretamente
+                // Cadastra o produto
                 $stmt = $conn->prepare("INSERT INTO produtos (titulo, descricao, valor, quantidade) VALUES (:titulo, :descricao, :valor, :quantidade)");
                 $stmt->bindParam(':titulo', $dados['titulo']);
                 $stmt->bindParam(':descricao', $dados['descricao']);
@@ -220,7 +220,17 @@ try {
             } catch (PDOException $e) {
                 // Desfaz a transação em caso de erro
                 $conn->rollBack();
-                throw $e;
+
+                // Verifica se é um erro do trigger
+                if ($e->getCode() == '45000') {
+                    http_response_code(400);
+                    echo json_encode([
+                        "erro" => true,
+                        "mensagem" => $e->getMessage()
+                    ]);
+                } else {
+                    throw $e;
+                }
             }
             // Final do POST produtos
             break;
