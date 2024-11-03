@@ -2,6 +2,36 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
+/**
+ * Controlador de Logs de Produtos - Documentação
+ * 
+ * Base Path: /back-end/controllers/produtos_logs.php
+ * 
+ * FUNCIONALIDADE:
+ * Consulta de histórico de alterações em produtos
+ * 
+ * ENDPOINT:
+ * GET /produtos/logs
+ * 
+ * RETORNO:
+ * Lista dos últimos 100 registros de alterações
+ * Inclui:
+ * - Dados do produto
+ * - Tipo de alteração
+ * - Quantidades (anterior e nova)
+ * - Data da modificação
+ * 
+ * JOINS:
+ * - Produtos (para dados complementares)
+ * 
+ * ORDENAÇÃO:
+ * - Por data de modificação (DESC)
+ * 
+ * LIMITE:
+ * - 100 registros por consulta
+ */
+
+
 try {
     require_once __DIR__ . '/../config/conexao.php';
 

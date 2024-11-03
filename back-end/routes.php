@@ -9,71 +9,55 @@
  * 
  * 1. PRODUTOS
  *    Rota: /produtos ou /produtos/{id}
- *    Implementação: Linhas 20-22
  *    Controller: /controllers/produtos.php
  *    Métodos Suportados: GET, POST, PUT, DELETE
  * 
  * 2. LOGIN
  *    Rota: /login
- *    Implementação: Linhas 24-26
  *    Controller: /controllers/login.php
  *    Métodos Suportados: POST
  * 
  * 3. USUÁRIOS
  *    Rota: /usuarios
- *    Implementação: Linhas 28-30
  *    Controller: /controllers/usuarios.php
  *    Métodos Suportados: GET, POST, PUT, DELETE
  * 
- * 4. CADASTRO
- *    Rota: /cadastrar
- *    Implementação: Linhas 32-34
+ * 4. ALTERAR SENHA
+ *    Rota: /alterar-senha
  *    Controller: /controllers/usuarios.php
- *    Métodos Suportados: POST
- * 
- * 5. ALTERAR SENHA (TODO)
- *    Rota: /usuarios/{id}/senha
- *    Implementação Futura: Será adicionado como PATCH em usuarios.php
  *    Métodos Suportados: PATCH
  *    Payload Esperado: {
  *      "senha_atual": "string",
  *      "nova_senha": "string"
  *    }
- *    Resposta Esperada: {
- *      "erro": false,
- *      "mensagem": "Senha alterada com sucesso"
- *    }
  * 
- * 6. USUÁRIOS - PERFIL
+ * 5. USUÁRIOS - PERFIL
  *    Rota: /usuarios/perfil
- *    Implementação: Linhas 36-38
  *    Controller: /controllers/usuarios.php
  *    Métodos Suportados: GET, POST, PUT, DELETE
  * 
- * 7. RELATÓRIOS
+ * 6. RELATÓRIOS
  *    Rota: /relatorios/estoque-baixo ou /relatorios/financeiro
- *    Implementação: Linhas 40-42
  *    Controller: /controllers/relatorios.php
  *    Métodos Suportados: GET
  * 
- * 8. PRODUTOS - LOGS
+ * 7. PRODUTOS - LOGS
  *    Rota: /produtos/logs
- *    Implementação: Linhas 44-46
  *    Controller: /controllers/produtos_logs.php
  *    Métodos Suportados: GET
  * 
  * CONFIGURAÇÕES:
- * - Configuração de erros: Linhas 2-3
- * - Configuração CORS: Linhas 5-7
- * - Tratamento OPTIONS: Linhas 9-12
+ * - Configuração de erros
+ * - Configuração CORS
+ * - Tratamento OPTIONS
  * 
  * TRATAMENTO DE ERROS:
- * - 404: Rota não encontrada (Linhas 32-38)
- * - 500: Erro interno do servidor (Linhas 39-46)
+ * - 404: Rota não encontrada
+ * - 500: Erro interno do servidor
  * 
  * PARÂMETROS DE ROTA:
- * - Parsing da URL: Linhas 14-17
- * - Extração de rota e ID: Linhas 19-20
+ * - Parsing da URL
+ * - Extração de rota e ID
  */
 
 header("Access-Control-Allow-Origin: *");

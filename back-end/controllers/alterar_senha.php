@@ -6,6 +6,57 @@ header("Content-Type: application/json; charset=UTF-8");
 
 include_once '../config/conexao.php';
 
+/**
+ * Controlador de Alteração de Senha - Documentação
+ * 
+ * Base Path: /back-end/controllers/alterar_senha.php
+ * 
+ * ENDPOINT:
+ * POST /alterar-senha
+ * Body: {
+ *   "email": "string",
+ *   "senha_atual": "string",
+ *   "nova_senha": "string"
+ * }
+ * 
+ * VALIDAÇÕES:
+ * - Verificação de bloqueio de conta
+ * - Verificação de senha atual
+ * - Validação de usuário ativo
+ * - Nova senha com mínimo de caracteres
+ * 
+ * SEGURANÇA:
+ * - Controle de tentativas de alteração
+ * - Bloqueio automático após 3 tentativas
+ * - Log de alterações de senha
+ * 
+ * RESPOSTA SUCESSO:
+ * {
+ *   "erro": false,
+ *   "mensagem": "Senha alterada com sucesso"
+ * }
+ * 
+ * RESPOSTA ERRO:
+ * {
+ *   "erro": true,
+ *   "mensagem": "string"
+ * }
+ * 
+ * CÓDIGOS DE ERRO:
+ * - 200: Sucesso
+ * - 400: Dados inválidos
+ * - 401: Senha atual incorreta
+ * - 403: Usuário bloqueado
+ * - 500: Erro interno
+ * 
+ * STORED PROCEDURES:
+ * - sp_atualizar_senha: Atualiza senha com validações
+ * - sp_registrar_tentativa: Registra tentativas de alteração
+ * 
+ * TRIGGERS:
+ * - tr_log_alteracao_senha: Registra alterações no log
+ */
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dados = json_decode(file_get_contents("php://input"));
 

@@ -1,5 +1,9 @@
 <?php
-
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Max-Age: 3600");
+header("Content-Type: application/json; charset=UTF-8");
 /**
  * API de Login - Documentação do Endpoint
  * 
@@ -43,11 +47,7 @@
  * - Implementar token JWT para autenticação
  */
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, GET, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
-header("Access-Control-Max-Age: 3600");
-header("Content-Type: application/json; charset=UTF-8");
+
 
 // Log para debug
 error_log("Requisição recebida: " . $_SERVER['REQUEST_METHOD']);

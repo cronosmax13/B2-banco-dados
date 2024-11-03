@@ -5,35 +5,31 @@
  * 
  * Base Path: /back-end/config/conexao.php
  * 
- * CONFIGURAÇÕES DO BANCO:
+ * CONFIGURAÇÕES:
  * 
  * 1. PARÂMETROS DE CONEXÃO
- *    Implementação: Linhas 6-9
- *    Variáveis:
- *    - $servername: "localhost"
- *    - $username: "root"
- *    - $password: "root"
- *    - $dbname: "empresa_crud"
+ *    - Host: localhost
+ *    - Usuário: root
+ *    - Senha: root
+ *    - Banco: empresa_crud
  * 
- * 2. CONFIGURAÇÃO PDO
- *    Implementação: Linhas 11-17
- *    Parâmetros:
- *    - charset: utf8
- *    - PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+ * 2. PDO SETTINGS
+ *    - Charset: UTF8
+ *    - Error Mode: ERRMODE_EXCEPTION
+ * 
+ * SEGURANÇA:
+ * - Uso de PDO para prepared statements
+ * - Tratamento de exceções
  * 
  * LOGS:
- * - Log de início de conexão: Linha 3
- * - Log de conexão bem-sucedida: Linha 19
- * - Log de erro de conexão: Linha 21
+ * - Início da conexão
+ * - Sucesso da conexão
+ * - Erros de conexão
  * 
- * TRATAMENTO DE ERROS:
- * - Try/Catch para PDOException: Linhas 2-23
- * - Lançamento de Exception personalizada em caso de erro
- * 
- * OBSERVAÇÕES:
- * - Em produção, mover credenciais para arquivo .env
- * - Considerar implementar pool de conexões
- * - Implementar timeout de conexão
+ * TODO:
+ * - Implementar variáveis de ambiente
+ * - Adicionar pool de conexões
+ * - Configurar timeout
  */
 
 try {

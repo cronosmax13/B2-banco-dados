@@ -1,4 +1,38 @@
 <?php
+
+/**
+ * Controlador de Estoque - Documentação
+ * 
+ * Base Path: /back-end/controllers/estoque.php
+ * 
+ * FUNCIONALIDADE:
+ * Atualização de estoque de produtos via stored procedure
+ * 
+ * ENDPOINT:
+ * POST /estoque
+ * Body: {
+ *   "produto_id": "integer",
+ *   "quantidade": "integer"
+ * }
+ * 
+ * VALIDAÇÕES:
+ * - Verificação de dados completos
+ * - Validação de quantidade não negativa (via SP)
+ * 
+ * RESPOSTA:
+ * Sucesso: {
+ *   "erro": false,
+ *   "mensagem": "string"
+ * }
+ * 
+ * Erro: {
+ *   "erro": true,
+ *   "mensagem": "string"
+ * }
+ * 
+ * STORED PROCEDURE:
+ * Utiliza sp_atualizar_estoque para processamento seguro
+ */
 try {
     require_once __DIR__ . '/../config/conexao.php';
 

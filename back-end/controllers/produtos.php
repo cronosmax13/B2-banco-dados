@@ -3,72 +3,59 @@
 /**
  * API de Produtos - Documentação dos Endpoints
  * 
- * Base URL: /back-end/controllers/produtos.php
+ * Base Path: /back-end/controllers/produtos.php
  * 
  * ENDPOINTS DISPONÍVEIS:
  * 
  * 1. LISTAR TODOS OS PRODUTOS
- *    GET /produtos.php
- *    Implementação: Linhas 89-99
- *    Retorna: Lista de todos os produtos ordenados por ID decrescente
+ *    GET /produtos
+ *    Retorna: Lista de todos os produtos
  *    Resposta: {
  *      "erro": false,
- *      "records": [{ id, titulo, descricao }, ...]
+ *      "produtos": [{ id, titulo, descricao, valor, quantidade }, ...]
  *    }
  * 
  * 2. BUSCAR PRODUTO ESPECÍFICO
- *    GET /produtos.php?id={id}
- *    Implementação: Linhas 65-87
+ *    GET /produtos?id={id}
  *    Retorna: Detalhes de um produto específico
  *    Resposta: {
  *      "erro": false,
- *      "produto": { id, titulo, descricao }
+ *      "produto": { id, titulo, descricao, valor, quantidade, valor_total_estoque }
  *    }
  * 
- * 3. CRIAR NOVO PRODUTO
- *    POST /produtos.php
- *    Implementação: Linhas 147-170
+ * 3. CRIAR PRODUTO
+ *    POST /produtos
  *    Body: {
  *      "titulo": "string",
  *      "descricao": "string",
  *      "valor": "decimal",
  *      "quantidade": "integer"
- *    }
- *    Resposta: {
- *      "erro": false,
- *      "mensagem": "Produto cadastrado com sucesso"
  *    }
  * 
  * 4. ATUALIZAR PRODUTO
- *    PUT /produtos.php?id={id}
- *    Implementação: Linhas 114-145
+ *    PUT /produtos?id={id}
  *    Body: {
  *      "titulo": "string",
  *      "descricao": "string",
  *      "valor": "decimal",
  *      "quantidade": "integer"
  *    }
- *    Resposta: {
- *      "erro": false,
- *      "mensagem": "Produto atualizado com sucesso"
- *    }
  * 
  * 5. DELETAR PRODUTO
- *    DELETE /produtos.php?id={id}
- *    Implementação: Linhas 101-112
- *    Resposta: {
- *      "erro": false,
- *      "mensagem": "Produto excluído com sucesso"
- *    }
+ *    DELETE /produtos?id={id}
  * 
- * CÓDIGOS DE ERRO:
- * - 200: Sucesso (Todas operações bem-sucedidas)
- * - 404: Produto não encontrado (GET com ID inválido)
- * - 500: Erro interno do servidor (Tratamento de exceções: Linhas 173-182)
+ * TRATAMENTO DE ERROS:
+ * - 404: Produto não encontrado
+ * - 400: Dados inválidos
+ * - 500: Erro interno do servidor
  * 
- * Configuração Inicial:
- * - Conexão com banco de dados: Linha 56
- * - Configuração do método e ID: Linhas 59-60
+ * TRANSAÇÕES:
+ * - Implementadas em operações críticas (POST, DELETE)
+ * - Rollback automático em caso de erro
+ * 
+ * LOGS:
+ * - Registro de alterações de estoque
+ * - Logs de operações via trigger
  */
 try {
     // Inclui o arquivo de configuração da conexão com o banco de dados

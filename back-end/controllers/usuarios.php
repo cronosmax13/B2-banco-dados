@@ -3,6 +3,59 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
+/**
+ * API de Usuários - Documentação dos Endpoints
+ * 
+ * Base Path: /back-end/controllers/usuarios.php
+ * 
+ * ENDPOINTS DISPONÍVEIS:
+ * 
+ * 1. LISTAR USUÁRIOS
+ *    GET /usuarios
+ *    Retorna: Lista de todos os usuários ativos
+ *    Resposta: {
+ *      "erro": false,
+ *      "usuarios": [{ id, nome, email, nivel_acesso, status }, ...]
+ *    }
+ * 
+ * 2. BUSCAR USUÁRIO
+ *    GET /usuarios?id={id}
+ *    Retorna: Detalhes de um usuário específico
+ * 
+ * 3. CRIAR USUÁRIO
+ *    POST /usuarios
+ *    Body: {
+ *      "nome": "string",
+ *      "email": "string",
+ *      "senha": "string"
+ *    }
+ * 
+ * 4. ATUALIZAR USUÁRIO
+ *    PUT /usuarios?id={id}
+ *    Body: {
+ *      "nome": "string",
+ *      "email": "string",
+ *      "status": "ativo|inativo"
+ *    }
+ * 
+ * 5. ALTERAR SENHA
+ *    PATCH /usuarios/{id}/senha
+ *    Body: {
+ *      "senha_atual": "string",
+ *      "nova_senha": "string"
+ *    }
+ * 
+ * VALIDAÇÕES:
+ * - Email único
+ * - Senha mínima de 6 caracteres
+ * - Verificação de usuário existente
+ * 
+ * SEGURANÇA:
+ * - Controle de tentativas de login
+ * - Bloqueio automático após 3 tentativas
+ * - Log de todas as operações
+ */
+
 
 try {
     require_once __DIR__ . '/../config/conexao.php';

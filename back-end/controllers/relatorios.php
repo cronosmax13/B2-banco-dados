@@ -2,6 +2,39 @@
 header('Access-Control-Allow-Origin: *');
 header('Content-Type: application/json');
 
+/**
+ * Controlador de Relatórios - Documentação
+ * 
+ * Base Path: /back-end/controllers/relatorios.php
+ * 
+ * ENDPOINTS:
+ * 
+ * 1. RELATÓRIO FINANCEIRO
+ *    GET /relatorios/financeiro
+ *    Utiliza: vw_relatorio_financeiro
+ *    Retorna: {
+ *      "erro": false,
+ *      "relatorio": [{ id, titulo, quantidade, valor, valor_total_estoque }],
+ *      "total_geral": "decimal"
+ *    }
+ * 
+ * 2. RELATÓRIO DE ESTOQUE BAIXO
+ *    GET /relatorios/estoque-baixo
+ *    Utiliza: vw_produtos_estoque_baixo
+ *    Retorna: {
+ *      "erro": false,
+ *      "produtos": [{ id, titulo, quantidade, status_estoque }]
+ *    }
+ * 
+ * VIEWS UTILIZADAS:
+ * - vw_relatorio_financeiro
+ * - vw_produtos_estoque_baixo
+ * 
+ * LOGS:
+ * - Registro de acionamento do controlador
+ * - Log de erros detalhado
+ */
+
 error_log("Controlador de relatórios acionado");
 
 try {
