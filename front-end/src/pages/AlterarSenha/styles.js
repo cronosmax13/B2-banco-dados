@@ -84,4 +84,15 @@ export const BotaoAcao = styled.button`
 export const AlertSuccess = styled.div`
   background-color: #d1e7dd;
   color: #0f5132;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+`;
+
+export const AlertDanger = styled.div`
+  background-color: #f8d7da;
+  color: #842029;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
 `;

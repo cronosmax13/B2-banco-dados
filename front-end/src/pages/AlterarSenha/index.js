@@ -52,26 +52,38 @@ export const AlterarSenha = () => {
     }
 
     try {
-      const response = await fetch(
-        "http://localhost:8000/controllers/alterar_senha.php",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: dados.email,
-            senha_atual: dados.senha_atual,
-            nova_senha: dados.nova_senha,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:8000/alterar-senha", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: dados.email,
+          senha_atual: dados.senha_atual,
+          nova_senha: dados.nova_senha,
+        }),
+      });
 
-      // ... resto do código ...
+      const data = await response.json();
+
+      if (data.erro) {
+        setStatus({
+          type: "erro",
+          mensagem: data.mensagem,
+        });
+      } else {
+        setStatus({
+          type: "success",
+          mensagem: "Senha alterada com sucesso!",
+        });
+        setTimeout(() => {
+          history.push("/login");
+        }, 2000);
+      }
     } catch (err) {
       setStatus({
         type: "erro",
-        mensagem: err.message,
+        mensagem: "Erro ao alterar senha: " + err.message,
       });
     }
   };
@@ -83,6 +95,12 @@ export const AlterarSenha = () => {
       <ConteudoTitulo>
         <Titulo>Alterar Senha</Titulo>
       </ConteudoTitulo>
+
+      {status.type === "erro" && <AlertDanger>{status.mensagem}</AlertDanger>}
+      {status.type === "success" && (
+        <AlertSuccess>{status.mensagem}</AlertSuccess>
+      )}
+
       <ConteudoForm>
         <Form onSubmit={handleSubmit}>
           <div>
@@ -125,6 +143,7 @@ export const AlterarSenha = () => {
           </div>
           <div className="button-container">
             <BotaoAcao type="submit">Alterar Senha</BotaoAcao>
+            <BotaoAcao onClick={() => history.push("/login")}>Voltar</BotaoAcao>
           </div>
         </Form>
       </ConteudoForm>

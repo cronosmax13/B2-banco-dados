@@ -85,7 +85,7 @@ try {
                 $stmt = $conn->prepare("SELECT * FROM produtos WHERE id = :id");
                 $stmt->bindParam(':id', $id);
                 $stmt->execute();
-
+                // Verifica se o produto foi encontrado
                 if ($stmt->rowCount() > 0) {
                     $produto = $stmt->fetch(PDO::FETCH_ASSOC);
                     echo json_encode([
@@ -93,12 +93,14 @@ try {
                         "produto" => $produto
                     ]);
                 } else {
+                    // Retorna um erro 404 se o produto não foi encontrado
                     http_response_code(404);
                     echo json_encode([
                         "erro" => true,
                         "mensagem" => "Produto não encontrado"
                     ]);
                 }
+                // Final do GET produtos com ID
             } else {
                 // ENDPOINT 1: Listar todos os produtos
                 $stmt = $conn->prepare("SELECT * FROM produtos");

@@ -1,6 +1,6 @@
 <?php
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 header('Content-Type: application/json');
 
@@ -14,15 +14,39 @@ try {
     $method = $_SERVER['REQUEST_METHOD'];
     switch ($method) {
         case 'GET':
-            // Listar usuários
-            $stmt = $conn->prepare("SELECT id, nome, email, status FROM usuarios");
-            $stmt->execute();
-            $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            // Verifica se foi fornecido um ID
+            $id = $_GET['id'] ?? null;
 
-            echo json_encode([
-                "erro" => false,
-                "usuarios" => $usuarios
-            ]);
+            if ($id) {
+                // Visualizar usuário específico
+                $stmt = $conn->prepare("SELECT id, nome, email, status FROM usuarios WHERE id = :id");
+                $stmt->bindParam(':id', $id);
+                $stmt->execute();
+                $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($usuario) {
+                    echo json_encode([
+                        "erro" => false,
+                        "usuario" => $usuario
+                    ]);
+                } else {
+                    http_response_code(404);
+                    echo json_encode([
+                        "erro" => true,
+                        "mensagem" => "Usuário não encontrado"
+                    ]);
+                }
+            } else {
+                // Listar todos os usuários (código existente)
+                $stmt = $conn->prepare("SELECT id, nome, email, status FROM usuarios");
+                $stmt->execute();
+                $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                echo json_encode([
+                    "erro" => false,
+                    "usuarios" => $usuarios
+                ]);
+            }
             break;
 
         case 'POST':
@@ -121,6 +145,49 @@ try {
                 ]);
             } else {
                 throw new Exception("Erro ao excluir usuário");
+            }
+            break;
+
+        case 'PATCH':
+            $json = file_get_contents('php://input');
+            $dados = json_decode($json, true);
+
+            if (!isset($dados['email']) || !isset($dados['senha_atual']) || !isset($dados['nova_senha'])) {
+                http_response_code(400);
+                echo json_encode([
+                    "erro" => true,
+                    "mensagem" => "Dados incompletos"
+                ]);
+                exit;
+            }
+
+            // Verifica se o usuário existe e se a senha atual está correta
+            $stmt = $conn->prepare("SELECT id FROM usuarios WHERE email = :email AND senha = :senha");
+            $stmt->bindParam(':email', $dados['email']);
+            $stmt->bindParam(':senha', $dados['senha_atual']);
+            $stmt->execute();
+
+            if ($stmt->rowCount() === 0) {
+                http_response_code(401);
+                echo json_encode([
+                    "erro" => true,
+                    "mensagem" => "Email ou senha atual incorretos"
+                ]);
+                exit;
+            }
+
+            // Atualiza a senha
+            $stmt = $conn->prepare("UPDATE usuarios SET senha = :nova_senha WHERE email = :email");
+            $stmt->bindParam(':nova_senha', $dados['nova_senha']);
+            $stmt->bindParam(':email', $dados['email']);
+
+            if ($stmt->execute()) {
+                echo json_encode([
+                    "erro" => false,
+                    "mensagem" => "Senha alterada com sucesso"
+                ]);
+            } else {
+                throw new Exception("Erro ao alterar senha");
             }
             break;
 
