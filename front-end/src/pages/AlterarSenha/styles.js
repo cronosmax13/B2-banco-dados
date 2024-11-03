@@ -65,19 +65,11 @@ export const BotaoAcao = styled.button`
   cursor: pointer;
   font-size: 16px;
   transition: all 0.3s;
+  margin-left: 10px;
 
   &:hover {
     background-color: #198754;
     color: #fff;
-  }
-
-  &[type="submit"] {
-    background-color: #198754;
-    color: #fff;
-
-    &:hover {
-      background-color: #146c43;
-    }
   }
 `;
 

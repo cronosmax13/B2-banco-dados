@@ -11,6 +11,9 @@ import {
   BotaoAcao,
   AlertSuccess,
   AlertDanger,
+  FormGroup,
+  Select,
+  ButtonContainer,
 } from "./styles";
 
 const EditarPerfil = () => {
@@ -18,6 +21,9 @@ const EditarPerfil = () => {
   const [usuario, setUsuario] = useState({
     nome: "",
     email: "",
+    nivel_acesso: "",
+    senha: "",
+    confirmar_senha: "",
   });
 
   const [status, setStatus] = useState({
@@ -26,21 +32,30 @@ const EditarPerfil = () => {
   });
 
   useEffect(() => {
-    // Carrega os dados do usuário do localStorage
     const storedUser = localStorage.getItem("@Authuser");
     if (storedUser) {
       const userData = JSON.parse(storedUser);
-      // Como o localStorage armazena um array com um único usuário
       const user = Array.isArray(userData) ? userData[0] : userData;
       setUsuario({
         nome: user.nome || "",
         email: user.email || "",
+        nivel_acesso: user.nivel_acesso || "",
+        senha: "",
+        confirmar_senha: "",
       });
     }
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (usuario.senha && usuario.senha !== usuario.confirmar_senha) {
+      setStatus({
+        type: "erro",
+        mensagem: "As senhas não conferem!",
+      });
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:8000/usuarios/perfil", {
@@ -51,6 +66,8 @@ const EditarPerfil = () => {
         body: JSON.stringify({
           email: usuario.email,
           nome: usuario.nome,
+          nivel_acesso: usuario.nivel_acesso,
+          senha: usuario.senha || undefined,
         }),
       });
 
@@ -67,12 +84,12 @@ const EditarPerfil = () => {
           mensagem: "Perfil atualizado com sucesso!",
         });
 
-        // Atualiza os dados no localStorage
         const storedUser = JSON.parse(localStorage.getItem("@Authuser"));
         if (storedUser) {
           const updatedUser = {
             ...storedUser[0],
             nome: usuario.nome,
+            nivel_acesso: usuario.nivel_acesso,
           };
           localStorage.setItem("@Authuser", JSON.stringify([updatedUser]));
         }
@@ -93,7 +110,6 @@ const EditarPerfil = () => {
     <Container>
       <ConteudoTitulo>
         <Titulo>Editar Perfil</Titulo>
-        <BotaoAcao onClick={() => history.push("/menu")}>Voltar</BotaoAcao>
       </ConteudoTitulo>
 
       {status.type === "erro" && <AlertDanger>{status.mensagem}</AlertDanger>}
@@ -113,18 +129,52 @@ const EditarPerfil = () => {
           </div>
           <div>
             <Label>Email</Label>
-            <Input
-              type="email"
-              value={usuario.email}
+            <Input type="email" value={usuario.email} disabled />
+          </div>
+          <FormGroup>
+            <Label>Nível de Acesso</Label>
+            <Select
+              value={usuario.nivel_acesso}
               onChange={(e) =>
-                setUsuario({ ...usuario, email: e.target.value })
+                setUsuario({ ...usuario, nivel_acesso: e.target.value })
               }
-              disabled
+            >
+              <option value="">Selecione...</option>
+              <option value="admin">Administrador</option>
+              <option value="usuario">Usuário</option>
+            </Select>
+          </FormGroup>
+          <div>
+            <Label>Nova Senha</Label>
+            <Input
+              type="password"
+              value={usuario.senha}
+              onChange={(e) =>
+                setUsuario({ ...usuario, senha: e.target.value })
+              }
+              placeholder="Deixe em branco para manter a senha atual"
             />
           </div>
-          <div className="button-container">
-            <BotaoAcao type="submit">Atualizar</BotaoAcao>
+          <div>
+            <Label>Confirmar Nova Senha</Label>
+            <Input
+              type="password"
+              value={usuario.confirmar_senha}
+              onChange={(e) =>
+                setUsuario({ ...usuario, confirmar_senha: e.target.value })
+              }
+              placeholder="Confirme a nova senha"
+            />
           </div>
+          <ButtonContainer>
+            <BotaoAcao type="submit">Atualizar</BotaoAcao>
+            <BotaoAcao
+              className="outline"
+              onClick={() => history.push("/menu")}
+            >
+              Voltar ao Menu
+            </BotaoAcao>
+          </ButtonContainer>
         </Form>
       </ConteudoForm>
     </Container>

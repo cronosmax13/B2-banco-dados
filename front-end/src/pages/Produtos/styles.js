@@ -151,3 +151,54 @@ export const Table = styled.table`
     background-color: #f5f5f5;
   }
 `;
+
+export const BotaoCadastrar = styled.button`
+  background-color: #fff;
+  color: #198754;
+  padding: 8px 12px;
+  border: 1px solid #198754;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: #198754;
+    color: #fff;
+  }
+`;
+
+export const BotaoSair = styled.button`
+  background-color: #fff;
+  color: #4a5568;
+  padding: 8px 12px;
+  border: 1px solid #4a5568;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: #4a5568;
+    color: #fff;
+  }
+`;
+
+export const BotaoVoltar = styled.button`
+  background-color: #fff;
+  color: #198754;
+  padding: 8px 12px;
+  border: 1px solid #198754;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 8px;
+  transition: all 0.3s;
+
+  &:hover {
+    background-color: #198754;
+    color: #fff;
+  }
+`;

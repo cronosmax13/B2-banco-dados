@@ -108,9 +108,40 @@ try {
             }
 
             try {
-                $stmt = $conn->prepare("UPDATE usuarios SET nome = :nome WHERE email = :email");
-                $stmt->bindParam(':nome', $dados['nome']);
+                // Prepara a query de atualização
+                $campos = [];
+                $valores = [];
+
+                if (isset($dados['nome']) && !empty($dados['nome'])) {
+                    $campos[] = "nome = :nome";
+                    $valores[':nome'] = $dados['nome'];
+                }
+
+                if (isset($dados['nivel_acesso']) && !empty($dados['nivel_acesso'])) {
+                    $campos[] = "nivel_acesso = :nivel_acesso";
+                    $valores[':nivel_acesso'] = $dados['nivel_acesso'];
+                }
+
+                if (isset($dados['senha']) && !empty($dados['senha'])) {
+                    $campos[] = "senha = :senha";
+                    $valores[':senha'] = $dados['senha'];
+                }
+
+                if (empty($campos)) {
+                    echo json_encode([
+                        "erro" => true,
+                        "mensagem" => "Nenhuma alteração realizada"
+                    ]);
+                    exit;
+                }
+
+                $sql = "UPDATE usuarios SET " . implode(', ', $campos) . " WHERE email = :email";
+                $stmt = $conn->prepare($sql);
+
                 $stmt->bindParam(':email', $dados['email']);
+                foreach ($valores as $param => $value) {
+                    $stmt->bindParam($param, $valores[$param]);
+                }
 
                 if ($stmt->execute()) {
                     echo json_encode([

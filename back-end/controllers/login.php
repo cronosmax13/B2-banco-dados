@@ -17,7 +17,7 @@
  *    Resposta Sucesso: {
  *      "erro": false,
  *      "mensagem": "Login realizado com sucesso",
- *      "usuario": { id, nome, email }
+ *      "usuario": { id, nome, email, nivel_acesso }
  *    }
  *    Resposta Erro: {
  *      "erro": true,
@@ -83,7 +83,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     "mensagem" => "Login realizado com sucesso",
                     "usuario" => [
                         "nome" => $usuario['nome'],
-                        "email" => $usuario['email']
+                        "email" => $usuario['email'],
+                        "nivel_acesso" => $usuario['nivel_acesso']
                     ]
                 ]);
             } else {

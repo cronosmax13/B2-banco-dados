@@ -11,6 +11,9 @@ import {
   AlertSuccess,
   AlertDanger,
   Titulo,
+  BotaoCadastrar,
+  BotaoSair,
+  BotaoVoltar,
 } from "./styles";
 
 export const Produtos = () => {
@@ -20,6 +23,11 @@ export const Produtos = () => {
     type: "",
     mensagem: "",
   });
+
+  const handleLogout = () => {
+    localStorage.removeItem("@Authuser");
+    history.push("/login");
+  };
 
   const getProdutos = async () => {
     try {
@@ -70,15 +78,12 @@ export const Produtos = () => {
       <ConteudoTitulo>
         <Titulo>Listar Produtos</Titulo>
         <div>
-          <ButtonSuccess onClick={() => history.push("/cadastrar")}>
+          <BotaoCadastrar onClick={() => history.push("/cadastrar")}>
             Cadastrar
-          </ButtonSuccess>
-          <ButtonDanger onClick={() => history.push("/login")}>
-            Sair
-          </ButtonDanger>
-          <ButtonPrimary onClick={() => history.push("/menu")}>
+          </BotaoCadastrar>
+          <BotaoVoltar onClick={() => history.push("/menu")}>
             Voltar ao menu
-          </ButtonPrimary>
+          </BotaoVoltar>
         </div>
       </ConteudoTitulo>
 
